@@ -1,0 +1,201 @@
+LICENÇA PROPRIETÁRIA - TASKFLOW
+Copyright © 2025 Carlos Antonio de Oliveira Piquet
+Todos os direitos reservados.
+
+================================================================================
+
+TERMOS E CONDIÇÕES DE USO
+
+1. PROPRIEDADE INTELECTUAL
+---------------------------
+Este software "TaskFlow" e toda sua documentação associada são propriedade 
+exclusiva de Carlos Antonio de Oliveira Piquet. Todos os direitos autorais, 
+marcas comerciais e direitos de propriedade intelectual são reservados.
+
+Desenvolvedor: Carlos Antonio de Oliveira Piquet
+Qualificações: 
+  - Especialista em Inteligência Artificial
+  - Estudante de Redes de Computadores
+
+
+2. CONCESSÃO DE LICENÇA
+------------------------
+É concedida uma licença limitada, não exclusiva, intransferível e revogável 
+para uso deste software, sujeita aos termos e condições aqui estabelecidos.
+
+
+3. PERMISSÕES
+-------------
+Sob esta licença, você PODE:
+
+✓ Usar o software para fins pessoais e comerciais
+✓ Modificar o código-fonte para uso próprio
+✓ Integrar o software em seus projetos internos
+✓ Personalizar a interface e funcionalidades
+✓ Fazer cópias de backup do software
+
+
+4. RESTRIÇÕES
+-------------
+Sob esta licença, você NÃO PODE:
+
+✗ Redistribuir o código-fonte sem autorização expressa por escrito
+✗ Vender, alugar ou sublicenciar o software
+✗ Remover ou alterar avisos de copyright, autoria ou marca registrada
+✗ Usar a marca "TaskFlow" sem permissão expressa
+✗ Realizar engenharia reversa para fins de cópia comercial
+✗ Publicar ou compartilhar o código em repositórios públicos sem autorização
+✗ Criar trabalhos derivados para distribuição comercial
+
+
+5. ATRIBUIÇÃO OBRIGATÓRIA
+--------------------------
+Qualquer uso, distribuição ou exibição pública do software DEVE manter 
+visível a seguinte atribuição:
+
+    "TaskFlow - Desenvolvido por Carlos Antonio de Oliveira Piquet
+     Especialista em Inteligência Artificial
+     Estudante de Redes de Computadores
+     © 2025 - Todos os direitos reservados"
+
+
+6. USO COMERCIAL EM LARGA ESCALA
+---------------------------------
+Para uso comercial em larga escala, licenciamento corporativo, OEM ou 
+distribuição comercial, é necessário obter uma licença comercial específica.
+
+Contate o autor para negociação de termos comerciais.
+
+
+7. ISENÇÃO DE GARANTIAS
+------------------------
+ESTE SOFTWARE É FORNECIDO "COMO ESTÁ", SEM GARANTIAS DE QUALQUER TIPO, 
+EXPRESSAS OU IMPLÍCITAS, INCLUINDO, MAS NÃO SE LIMITANDO A, GARANTIAS 
+DE COMERCIALIZAÇÃO, ADEQUAÇÃO A UM PROPÓSITO ESPECÍFICO E NÃO VIOLAÇÃO.
+
+O AUTOR NÃO GARANTE QUE:
+- O software funcionará sem interrupções ou erros
+- Todos os defeitos serão corrigidos
+- O software atenderá aos seus requisitos específicos
+- Os resultados obtidos serão precisos ou confiáveis
+
+
+8. LIMITAÇÃO DE RESPONSABILIDADE
+---------------------------------
+EM NENHUMA CIRCUNSTÂNCIA O AUTOR SERÁ RESPONSÁVEL POR QUAISQUER DANOS 
+DIRETOS, INDIRETOS, INCIDENTAIS, ESPECIAIS, EXEMPLARES OU CONSEQUENCIAIS 
+(INCLUINDO, MAS NÃO SE LIMITANDO A, PROCUREMENT DE BENS OU SERVIÇOS 
+SUBSTITUTOS; PERDA DE USO, DADOS OU LUCROS; OU INTERRUPÇÃO DE NEGÓCIOS) 
+DECORRENTES DO USO OU INCAPACIDADE DE USO DESTE SOFTWARE.
+
+
+9. PROTEÇÃO LEGAL
+------------------
+Este software está protegido pelas seguintes leis brasileiras:
+
+- Lei nº 9.610/98 (Lei de Direitos Autorais)
+- Lei nº 9.609/98 (Lei do Software)
+- Código Penal Brasileiro (Artigos 184 e 185)
+
+E também por tratados internacionais:
+
+- Convenção de Berna
+- Acordo TRIPS (OMC)
+- Tratados da OMPI (WIPO)
+
+VIOLAÇÕES DESTA LICENÇA ESTÃO SUJEITAS A:
+- Ações civis com indenizações
+- Processos criminais
+- Penalidades previstas em lei
+
+
+10. AUDITORIA E CONFORMIDADE
+-----------------------------
+O autor reserva-se o direito de auditar o uso deste software para garantir 
+conformidade com os termos desta licença. O usuário concorda em cooperar 
+com tais auditorias mediante solicitação razoável.
+
+
+11. TÉRMINO DA LICENÇA
+-----------------------
+Esta licença é automaticamente rescindida se você violar qualquer um de 
+seus termos. Ao término, você deve:
+
+- Cessar imediatamente todo uso do software
+- Destruir todas as cópias do software em sua posse
+- Remover o software de todos os sistemas
+
+
+12. ATUALIZAÇÕES E MODIFICAÇÕES
+--------------------------------
+O autor reserva-se o direito de:
+
+- Modificar esta licença a qualquer momento
+- Atualizar os termos de uso
+- Descontinuar o suporte ao software
+- Alterar funcionalidades em versões futuras
+
+Usuários serão notificados de mudanças significativas através do 
+repositório oficial ou outros meios de comunicação.
+
+
+13. SUPORTE E MANUTENÇÃO
+-------------------------
+O suporte e manutenção do software são fornecidos conforme disponibilidade 
+do autor, sem garantias de tempo de resposta ou resolução.
+
+Para suporte empresarial com SLA, entre em contato para licença comercial.
+
+
+14. CÓDIGO ABERTO E DEPENDÊNCIAS
+---------------------------------
+Este software pode incluir componentes de código aberto que estão sujeitos 
+a suas próprias licenças. Todas as licenças de terceiros são respeitadas 
+e mantidas conforme suas respectivas condições.
+
+
+15. LEGISLAÇÃO APLICÁVEL
+-------------------------
+Esta licença é regida pelas leis da República Federativa do Brasil.
+
+Quaisquer disputas relacionadas a esta licença serão resolvidas nos 
+tribunais brasileiros competentes.
+
+
+16. CONTATO
+-----------
+Para questões sobre:
+- Licenciamento comercial
+- Permissões especiais
+- Parcerias
+- Suporte empresarial
+- Dúvidas legais
+
+Entre em contato através do repositório oficial no GitHub:
+https://github.com/carlospiquet2023
+
+
+17. ACEITAÇÃO DOS TERMOS
+-------------------------
+AO USAR ESTE SOFTWARE, VOCÊ INDICA SUA ACEITAÇÃO DESTES TERMOS E 
+CONDIÇÕES. SE VOCÊ NÃO CONCORDA COM ESTES TERMOS, NÃO USE O SOFTWARE.
+
+
+================================================================================
+
+INFORMAÇÕES DO DESENVOLVEDOR
+-----------------------------
+Nome: Carlos Antonio de Oliveira Piquet
+Especialidade: Inteligência Artificial
+Formação: Estudante de Redes de Computadores
+Ano: 2025
+
+TaskFlow © 2025 - Todos os direitos reservados.
+
+================================================================================
+
+VERSÃO DA LICENÇA: 1.0
+DATA DE VIGÊNCIA: Novembro de 2025
+ÚLTIMA ATUALIZAÇÃO: 14 de Novembro de 2025
+
+================================================================================

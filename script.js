@@ -1067,6 +1067,33 @@ function setupEventListeners() {
     
     // Setup command palette
     setupCommandPalette();
+    
+    // Setup license modal
+    setupLicenseModal();
+}
+
+// ========================================
+// License Modal
+// ========================================
+function setupLicenseModal() {
+    const viewLicenseBtn = document.getElementById('viewLicense');
+    const licenseModal = document.getElementById('licenseModal');
+    const closeLicenseBtn = document.getElementById('closeLicense');
+    
+    viewLicenseBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        licenseModal.classList.add('active');
+    });
+    
+    closeLicenseBtn?.addEventListener('click', () => {
+        licenseModal.classList.remove('active');
+    });
+    
+    licenseModal?.addEventListener('click', (e) => {
+        if (e.target === licenseModal) {
+            licenseModal.classList.remove('active');
+        }
+    });
 }
 
 // ========================================
