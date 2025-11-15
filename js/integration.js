@@ -309,7 +309,9 @@ window.setupAlarmInterface = function() {
         if (!dateValue || !timeValue) return;
 
         // Calcular horário do alarme
-        const taskDateTime = new Date(dateValue + 'T' + timeValue);
+        const [year, month, day] = dateValue.split('-');
+        const [hours, minutes] = timeValue.split(':');
+        const taskDateTime = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hours), parseInt(minutes));
         const alarmDateTime = new Date(taskDateTime.getTime() - minutesBefore * 60000);
 
         // Formatar data e hora
@@ -332,40 +334,6 @@ window.setupAlarmInterface = function() {
             alarmPreview.style.animation = 'pulse 2s ease-in-out infinite';
         }, 10);
     }
-};
-            
-            if (!taskDateInput || !taskDateInput.value) {
-                alert('⚠️ Selecione primeiro uma data para a tarefa!');
-                return;
-            }
-
-            // Calcular horário do alarme
-            // Assumir que a tarefa é para o meio-dia se não houver hora específica
-            const taskDate = new Date(taskDateInput.value + ' 12:00');
-            const alarmTime = new Date(taskDate.getTime() - minutes * 60 * 1000);
-
-            const alarmDate = document.getElementById('alarmDate');
-            const alarmTimeInput = document.getElementById('alarmTime');
-            
-            if (alarmDate && alarmTimeInput) {
-                alarmDate.value = alarmTime.toISOString().split('T')[0];
-                alarmTimeInput.value = alarmTime.toTimeString().substring(0, 5);
-                
-                // Ativar o checkbox
-                const enableAlarmCheckbox = document.getElementById('enableAlarm');
-                if (enableAlarmCheckbox && !enableAlarmCheckbox.checked) {
-                    enableAlarmCheckbox.checked = true;
-                    enableAlarmCheckbox.dispatchEvent(new Event('change'));
-                }
-                
-                // Feedback visual
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 100);
-            }
-        });
-    });
 };
 
 // ==================== EXPORT/IMPORT COM INDEXEDDB ====================

@@ -97,8 +97,8 @@ body::before {
 /* Header */
 .header {
     background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border-color);
     padding: 1rem 0;
     position: sticky;
@@ -2577,5 +2577,422 @@ body::before {
         max-width: 100%;
     }
 }
+
+/* ========================================
+   TEMA SYSTEM - Transições e Partículas
+   ======================================== */
+.hidden-input {
+    display: none !important;
+}
+
+.hidden-modal {
+    display: none !important;
+}
+
+.hidden-modal.active {
+    display: block !important;
+}
+
+.theme-transitioning {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.theme-transitioning * {
+    transition: background-color 0.5s, color 0.5s, border-color 0.5s, box-shadow 0.5s !important;
+}
+
+.theme-particle {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    animation: themeParticle 2s ease-out forwards;
+}
+
+@keyframes themeParticle {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100vh) scale(0);
+    }
+}
+
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+.theme-card {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--primary-color);
+}
+
+.theme-card.active {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+.theme-card.active::before {
+    content: '✓';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--primary-color);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.theme-preview {
+    border-radius: 8px;
+    padding: 1.5rem 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.theme-icon-large {
+    font-size: 3rem;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+
+.theme-colors {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.theme-colors span {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.theme-name {
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* ========================================
+   ALARM MODAL - Modal Profissional
+   ======================================== */
+.alarm-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.alarm-modal.active {
+    opacity: 1;
+}
+
+.alarm-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+
+.alarm-modal-content {
+    position: relative;
+    background: var(--bg-secondary);
+    border-radius: 24px;
+    padding: 3rem 2rem 2rem;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.alarm-modal.active .alarm-modal-content {
+    transform: scale(1);
+}
+
+.alarm-icon-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+}
+
+.alarm-icon {
+    font-size: 5rem;
+    position: relative;
+    z-index: 2;
+    animation: alarmShake 0.5s ease-in-out infinite;
+}
+
+@keyframes alarmShake {
+    0%, 100% { transform: rotate(-10deg); }
+    50% { transform: rotate(10deg); }
+}
+
+.alarm-icon-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    opacity: 0.3;
+    animation: alarmPulse 1.5s ease-out infinite;
+}
+
+@keyframes alarmPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0.6;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0;
+    }
+}
+
+.alarm-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.alarm-message {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.alarm-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.alarm-buttons .btn {
+    min-width: 140px;
+}
+
+.alarm-stop-btn {
+    background: var(--success-color);
+}
+
+.alarm-snooze-btn {
+    background: var(--text-secondary);
+}
+
+/* ========================================
+   DASHBOARD - Modal e Gráficos
+   ======================================== */
+.modal-dashboard {
+    max-width: 1200px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.chart-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: 350px;
+}
+
+.heatmap-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+#heatmapChart {
+    width: 100%;
+    height: 200px;
+}
+
+/* Scrollbar personalizada para dashboard */
+.modal-dashboard::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-dashboard::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+}
+
+.modal-dashboard::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+.modal-dashboard::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+/* ========================================
+   RESPONSIVO - Novos Componentes
+   ======================================== */
+@media (max-width: 768px) {
+    .theme-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1rem;
+    }
+
+    .theme-icon-large {
+        font-size: 2.5rem;
+    }
+
+    .stats-cards {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .chart-container {
+        height: 300px;
+    }
+
+    .alarm-modal-content {
+        padding: 2rem 1.5rem 1.5rem;
+    }
+
+    .alarm-icon {
+        font-size: 4rem;
+    }
+
+    .alarm-title {
+        font-size: 1.5rem;
+    }
+
+    .alarm-buttons {
+        flex-direction: column;
+    }
+
+    .alarm-buttons .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-dashboard {
+        width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+}
+
 
 

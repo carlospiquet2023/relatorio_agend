@@ -141,18 +141,9 @@ function checkAchievements() {
 }
 
 // ========================================
-// Inicialização
+// Inicialização ANTIGA (será substituída pela nova)
 // ========================================
-document.addEventListener('DOMContentLoaded', () => {
-    loadFromLocalStorage();
-    initializeTheme();
-    renderCalendar();
-    updateSummary();
-    setupEventListeners();
-    initializeAnimations();
-    createFloatingParticles();
-    showToast('🚀 TaskFlow carregado com sucesso!');
-});
+// REMOVIDO - Agora usando initializeCompleteSystem() no final do arquivo
 
 // Animações iniciais
 function initializeAnimations() {
@@ -916,8 +907,8 @@ function openWhatsAppPrompt() {
     }
     
     const whatsappModal = document.getElementById('whatsappModal');
+    whatsappModal.classList.remove('hidden-modal');
     whatsappModal.classList.add('active');
-    whatsappModal.style.display = 'block';
     
     // Focar no input
     setTimeout(() => {
@@ -928,7 +919,7 @@ function openWhatsAppPrompt() {
 function closeWhatsAppPrompt() {
     const whatsappModal = document.getElementById('whatsappModal');
     whatsappModal.classList.remove('active');
-    whatsappModal.style.display = 'none';
+    whatsappModal.classList.add('hidden-modal');
     document.getElementById('whatsappNumber').value = '';
 }
 
@@ -1377,3 +1368,77 @@ setInterval(() => {
         }
     }
 }, 30000); // Auto-save a cada 30 segundos
+
+// ========================================
+// Inicialização Completa do Sistema
+// ========================================
+async function initializeCompleteSystem() {
+    console.log('🚀 Iniciando TaskFlow System...');
+    
+    // 1. Inicializar banco de dados
+    if (typeof db !== 'undefined') {
+        await db.init();
+        await db.migrateFromLocalStorage();
+    }
+    
+    // 2. Inicializar sistema de alarmes
+    if (typeof alarmSystem !== 'undefined') {
+        await alarmSystem.init();
+    }
+    
+    // 3. Inicializar sistema de temas
+    if (typeof themeSystem !== 'undefined') {
+        await themeSystem.init();
+    } else {
+        // Fallback para tema básico
+        initializeTheme();
+    }
+    
+    // 4. Inicializar dashboard
+    if (typeof dashboardSystem !== 'undefined') {
+        await dashboardSystem.init();
+    }
+    
+    // 5. Inicializar sistema de integrações
+    if (typeof integrations !== 'undefined') {
+        await integrations.init();
+    }
+    
+    // 7. Carregar dados antigos (compatibilidade)
+    loadFromLocalStorage();
+    
+    // 8. Renderizar interface
+    renderCalendar();
+    updateSummary();
+    updateFilterBadges();
+    
+    // 9. Configurar event listeners
+    setupEventListeners();
+    
+    // 10. Criar partículas de fundo
+    createBackgroundParticles();
+    
+    // 11. Inicializar animações
+    if (typeof initializeAnimations === 'function') {
+        initializeAnimations();
+    }
+    
+    // 12. Criar partículas flutuantes
+    if (typeof createFloatingParticles === 'function') {
+        createFloatingParticles();
+    }
+    
+    console.log('✅ TaskFlow System inicializado com sucesso!');
+    
+    // Mensagem de boas-vindas
+    setTimeout(() => {
+        showToast('🎉 Bem-vindo ao TaskFlow - Sistema Profissional de Tarefas!');
+    }, 500);
+}
+
+// Iniciar quando o DOM estiver pronto
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeCompleteSystem);
+} else {
+    initializeCompleteSystem();
+}

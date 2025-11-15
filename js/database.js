@@ -406,9 +406,66 @@ class TaskFlowDB {
             console.log('✅ Dados importados com sucesso');
             return true;
         } catch (error) {
-            console.error('❌ Erro ao importar dados:', error);
+            console.log('❌ Erro ao importar dados:', error);
             return false;
         }
+    }
+
+    /**
+     * Salva uma configuração
+     */
+    async saveSetting(key, value) {
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(['settings'], 'readwrite');
+            const store = transaction.objectStore('settings');
+            const request = store.put({ key, value });
+
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+    }
+
+    /**
+     * Obtém uma configuração
+     */
+    async getSetting(key) {
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction(['settings'], 'readonly');
+            const store = transaction.objectStore('settings');
+            const request = store.get(key);
+
+            request.onsuccess = () => {
+                resolve(request.result ? request.result.value : null);
+            };
+            request.onerror = () => reject(request.error);
+        });
+    }
+
+    /**
+     * Obtém tarefas por data
+     */
+    async getTasksByDate(date) {
+        const allTasks = await this.getAllTasks();
+        return allTasks.filter(task => task.date === date);
+    }
+
+    /**
+     * Obtém estatísticas gerais
+     */
+    async getStatistics() {
+        const tasks = await this.getAllTasks();
+        
+        const stats = {
+            totalTasks: tasks.length,
+            completedTasks: tasks.filter(t => t.completed).length,
+            pendingTasks: tasks.filter(t => !t.completed).length,
+            highPriority: tasks.filter(t => t.priority === 'high').length,
+            mediumPriority: tasks.filter(t => t.priority === 'medium').length,
+            lowPriority: tasks.filter(t => t.priority === 'low').length,
+            streak: 0
+        };
+
+        return stats;
     }
 }
 

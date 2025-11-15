@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Tarefas & Calendário</title>
     <link rel="stylesheet" href="css/styles.css">
+    <!-- Chart.js para gráficos profissionais -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <!-- Sistema de Alarme Visual -->
@@ -58,7 +60,7 @@
                     <button class="btn btn-success" id="exportReport">📄 Exportar Relatório</button>
                     <button class="btn btn-info" id="backupData">💾 Backup</button>
                     <button class="btn btn-warning" id="importData">📥 Importar</button>
-                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                    <input type="file" id="importFile" accept=".json" class="hidden-input" title="Importar arquivo de backup" aria-label="Importar arquivo de backup">
                 </div>
             </div>
 
@@ -202,7 +204,7 @@
                 </div>
                 
                 <!-- Modal de WhatsApp -->
-                <div id="whatsappModal" class="whatsapp-prompt" style="display: none;">
+                <div id="whatsappModal" class="whatsapp-prompt hidden-modal">
                     <div class="whatsapp-prompt-content">
                         <h4>📱 Enviar para WhatsApp</h4>
                         <p>Digite o número com DDD (apenas números):</p>
@@ -411,8 +413,11 @@
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="js/database.js"></script>
     <script src="js/alarm.js"></script>
+    <script src="js/themes.js"></script>
+    <script src="js/dashboard.js"></script>
     <script src="js/integration.js"></script>
     <script src="js/script.js"></script>
 </body>

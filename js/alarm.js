@@ -39,11 +39,13 @@ class AlarmSystem {
             this.audioElement = document.createElement('audio');
             this.audioElement.id = 'somAlarme';
             this.audioElement.preload = 'auto';
-            // Usando data URL para som de alarme
-            this.audioElement.src = 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZUREOXKLS8cmCMwYhc8Tv5p1NFBEORJ/Y8sR2JAU=';
+            // Usar arquivo de alarme profissional da pasta alarme
+            this.audioElement.src = 'alarme/Bells Message Pack vol.1  1.wav';
             document.body.appendChild(this.audioElement);
         }
     }
+
+
 
     /**
      * Solicita permissão para notificações do navegador
@@ -140,18 +142,65 @@ class AlarmSystem {
      * Mostra alerta visual na tela
      */
     showVisualAlert(titulo, mensagem) {
+        // Criar modal de alarme customizada
+        const modal = document.createElement('div');
+        modal.className = 'alarm-modal';
+        modal.innerHTML = `
+            <div class="alarm-modal-overlay"></div>
+            <div class="alarm-modal-content">
+                <div class="alarm-icon-container">
+                    <div class="alarm-icon-pulse"></div>
+                    <div class="alarm-icon">⏰</div>
+                </div>
+                <h2 class="alarm-title">${titulo}</h2>
+                <p class="alarm-message">${mensagem}</p>
+                <div class="alarm-buttons">
+                    <button class="btn btn-primary btn-lg alarm-stop-btn">
+                        ✓ Entendi
+                    </button>
+                    <button class="btn btn-secondary alarm-snooze-btn">
+                        💤 Soneca (5 min)
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Animar entrada
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+
+        // Event listeners
+        modal.querySelector('.alarm-stop-btn').addEventListener('click', () => {
+            this.stopAlarm();
+            modal.classList.remove('active');
+            setTimeout(() => modal.remove(), 300);
+        });
+
+        modal.querySelector('.alarm-snooze-btn').addEventListener('click', () => {
+            this.stopAlarmSound();
+            modal.classList.remove('active');
+            setTimeout(() => modal.remove(), 300);
+            // Reagendar para 5 minutos
+            this.snoozeAlarm(5);
+        });
+
+        // Também mostrar no elemento antigo (compatibilidade)
         const alertElement = document.getElementById('alerta');
-        const tituloElement = document.getElementById('alertaTitulo');
-        const mensagemElement = document.getElementById('alertaMensagem');
-
-        if (alertElement && tituloElement && mensagemElement) {
-            tituloElement.textContent = titulo;
-            mensagemElement.textContent = mensagem;
-            alertElement.style.display = 'block';
-
-            // Criar efeito de partículas
-            this.createAlertParticles();
+        if (alertElement) {
+            const tituloElement = document.getElementById('alertaTitulo');
+            const mensagemElement = document.getElementById('alertaMensagem');
+            if (tituloElement && mensagemElement) {
+                tituloElement.textContent = titulo;
+                mensagemElement.textContent = mensagem;
+                alertElement.style.display = 'block';
+            }
         }
+
+        // Criar efeito de partículas
+        this.createAlertParticles();
     }
 
     /**
@@ -187,9 +236,41 @@ class AlarmSystem {
             alertElement.style.display = 'none';
         }
 
+        // Remover modal customizada se existir
+        const alarmModal = document.querySelector('.alarm-modal');
+        if (alarmModal) {
+            alarmModal.classList.remove('active');
+            setTimeout(() => alarmModal.remove(), 300);
+        }
+
         // Limpar partículas
         const particles = document.querySelectorAll('.alert-particle');
         particles.forEach(p => p.remove());
+    }
+
+    /**
+     * Função de soneca - reagenda alarme
+     */
+    async snoozeAlarm(minutes = 5) {
+        const snoozeTime = new Date(Date.now() + minutes * 60000);
+        
+        // Mostrar notificação
+        if (this.notificationPermission) {
+            new Notification('Soneca Ativada', {
+                body: `Alarme reagendado para ${snoozeTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`,
+                icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">💤</text></svg>'
+            });
+        }
+
+        // Agendar novo alarme
+        await this.scheduleAlarm(
+            'snooze_' + Date.now(),
+            snoozeTime,
+            'Fim da Soneca',
+            'Hora de voltar ao trabalho!'
+        );
+
+        console.log('💤 Soneca agendada para:', snoozeTime);
     }
 
     /**
