@@ -486,10 +486,6 @@ body::before {
     border-radius: 14px;
     padding: 2px;
     background: linear-gradient(135deg, #667eea, #764ba2);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
     opacity: 0;
     transition: opacity 0.3s;
 }
@@ -779,6 +775,32 @@ body::before {
 .form-group textarea {
     resize: vertical;
     min-height: 100px;
+}
+
+/* Task Time Input */
+.task-time-input {
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: var(--bg-color);
+    color: var(--text-color);
+    width: 100%;
+}
+
+.task-time-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.field-hint {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-style: italic;
 }
 
 /* Priority Buttons */
@@ -2033,3 +2055,527 @@ body::before {
         border: 1px solid #000;
     }
 }
+
+/* ==================== SISTEMA DE ALARMES ==================== */
+
+/* Alerta Visual */
+.alerta {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(255, 68, 68, 0.5),
+                0 0 0 10px rgba(255, 68, 68, 0.2),
+                0 0 0 20px rgba(255, 68, 68, 0.1);
+    z-index: 10000;
+    min-width: 400px;
+    max-width: 90vw;
+    animation: alerta-shake 0.5s ease-in-out infinite alternate,
+               alerta-pulse 1s ease-in-out infinite;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.alerta::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(45deg, #ff4444, #ffaa00, #ff4444);
+    animation: gradient-rotate 3s linear infinite;
+}
+
+.alerta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.alerta-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: alerta-glow 2s ease-in-out infinite;
+}
+
+.alerta-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alerta-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+#alertaTitulo {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+#alertaMensagem {
+    font-size: 1.2rem;
+    margin: 1.5rem 0;
+    line-height: 1.6;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.alerta-btn {
+    width: 100%;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    background: white;
+    color: #ff4444;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.alerta-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Partículas de Alerta */
+.alert-particle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: alert-particle-float 2s ease-out forwards;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+/* Animações do Alerta */
+@keyframes alerta-shake {
+    0% { transform: translate(-50%, -50%) rotate(-2deg); }
+    100% { transform: translate(-50%, -50%) rotate(2deg); }
+}
+
+@keyframes alerta-pulse {
+    0%, 100% { 
+        box-shadow: 0 20px 60px rgba(255, 68, 68, 0.5),
+                    0 0 0 10px rgba(255, 68, 68, 0.2),
+                    0 0 0 20px rgba(255, 68, 68, 0.1);
+    }
+    50% { 
+        box-shadow: 0 20px 60px rgba(255, 68, 68, 0.7),
+                    0 0 0 15px rgba(255, 68, 68, 0.3),
+                    0 0 0 30px rgba(255, 68, 68, 0.2);
+    }
+}
+
+@keyframes alerta-glow {
+    0%, 100% { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); }
+    50% { text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.5); }
+}
+
+@keyframes alert-particle-float {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes gradient-rotate {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+/* Campos de Alarme no Modal */
+.alarm-section {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 2px dashed var(--primary-color);
+    margin-top: 1rem;
+}
+
+.alarm-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.alarm-label:hover {
+    color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.alarm-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.alarm-fields {
+    margin-top: 1rem;
+    animation: slideDown 0.3s ease;
+}
+
+.alarm-fields.hidden {
+    display: none !important;
+}
+
+.alarm-description {
+    background: rgba(102, 126, 234, 0.05);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border-left: 3px solid var(--primary-color);
+}
+
+.alarm-description p {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+.alarm-description strong {
+    color: var(--primary-color);
+}
+
+.alarm-preview {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    text-align: center;
+    border: 2px solid var(--primary-color);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.alarm-preview.hidden {
+    display: none;
+}
+
+.alarm-preview strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.alarm-preview span {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.alarm-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group-inline {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group-inline label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.alarm-input {
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+.alarm-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.alarm-quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.btn-quick-alarm {
+    padding: 0.8rem 1rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-quick-alarm::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-quick-alarm:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-quick-alarm.selected {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+    transform: scale(1.05);
+}
+
+.btn-quick-alarm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.alarm-info {
+    display: block;
+    color: var(--primary-color);
+    font-style: italic;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 6px;
+    border-left: 3px solid var(--primary-color);
+}
+
+/* Indicador de Alarme nas Tarefas */
+.task-alarm-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    background: rgba(102, 126, 234, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    margin-left: 0.5rem;
+}
+
+.task-alarm-indicator::before {
+    content: '⏰';
+}
+
+/* Responsividade dos Alarmes */
+@media (max-width: 768px) {
+    .alerta {
+        min-width: 90vw;
+        padding: 1.5rem;
+    }
+
+    .alerta-header h2 {
+        font-size: 1.5rem;
+    }
+
+    #alertaMensagem {
+        font-size: 1rem;
+    }
+
+    .alarm-inputs {
+        grid-template-columns: 1fr;
+    }
+
+    .alarm-quick-actions {
+        flex-direction: column;
+    }
+
+    .btn-quick-alarm {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .alerta {
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: calc(100vw - 2rem);
+    }
+}
+
+/* ==================== WHATSAPP INTEGRATION ==================== */
+
+.whatsapp-prompt {
+    display: none;
+    background: linear-gradient(135deg, rgba(37, 211, 102, 0.1), rgba(18, 140, 126, 0.1));
+    border: 2px solid #25d366;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    animation: slideInDown 0.3s ease;
+}
+
+.whatsapp-prompt.active {
+    display: block;
+}
+
+.whatsapp-prompt-content h4 {
+    color: #25d366;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.whatsapp-prompt-content p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.whatsapp-input-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.country-code {
+    background: #25d366;
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 8px 0 0 8px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    border: 2px solid #25d366;
+}
+
+.whatsapp-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid #25d366;
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.whatsapp-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.2);
+}
+
+.whatsapp-input::placeholder {
+    color: var(--text-light);
+}
+
+.whatsapp-hint {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.whatsapp-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+.whatsapp-buttons .btn {
+    flex: 1;
+    max-width: 150px;
+}
+
+/* Animação de envio */
+@keyframes whatsapp-send {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1) rotate(5deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+.whatsapp-sending {
+    animation: whatsapp-send 0.5s ease;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Responsivo WhatsApp */
+@media (max-width: 480px) {
+    .whatsapp-prompt {
+        padding: 1rem;
+    }
+
+    .whatsapp-input-group {
+        flex-direction: column;
+    }
+
+    .country-code {
+        border-radius: 8px;
+        text-align: center;
+        border-right: 2px solid #25d366;
+    }
+
+    .whatsapp-input {
+        border-left: 2px solid #25d366;
+        border-radius: 8px;
+    }
+
+    .whatsapp-buttons {
+        flex-direction: column;
+    }
+
+    .whatsapp-buttons .btn {
+        max-width: 100%;
+    }
+}
+
+

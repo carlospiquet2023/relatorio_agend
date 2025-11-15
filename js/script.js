@@ -458,16 +458,20 @@ function displayExistingTasks(date) {
                     <button class="btn-delete" onclick="deleteTask('${dateKey}', ${index})">🗑️ Excluir</button>
                 </div>
             </div>
-            <div class="task-text">${escapeHtml(task.text)}</div>
+            <div class="task-text">
+                ${task.time ? `<strong style="color: var(--primary-color);">🕐 ${task.time}</strong> - ` : ''}
+                ${escapeHtml(task.text)}
+            </div>
         `;
         
         container.appendChild(taskElement);
     });
 }
 
-function saveTask() {
+async function saveTask() {
     const taskText = document.getElementById('taskText').value.trim();
     const selectedPriority = document.querySelector('.priority-btn.active');
+    const taskTimeInput = document.getElementById('taskTime');
     
     if (!taskText) {
         showToast('⚠️ Digite uma tarefa!', 'warning');
@@ -478,35 +482,92 @@ function saveTask() {
         showToast('⚠️ Selecione uma prioridade!', 'warning');
         return;
     }
-    
-    const dateKey = formatDateKey(state.selectedDate);
-    
-    if (!state.tasks[dateKey]) {
-        state.tasks[dateKey] = [];
+
+    if (!taskTimeInput || !taskTimeInput.value) {
+        showToast('⚠️ Defina o horário da tarefa!', 'warning');
+        return;
     }
     
-    state.tasks[dateKey].push({
+    const dateKey = formatDateKey(state.selectedDate);
+    const taskTime = taskTimeInput.value;
+    
+    // Criar objeto da tarefa
+    const taskData = {
+        id: 'task_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
         text: taskText,
         priority: selectedPriority.dataset.priority,
+        date: dateKey,
+        time: taskTime,
+        completed: false,
         createdAt: new Date().toISOString()
-    });
+    };
+
+    // Verificar se alarme está ativado
+    const enableAlarm = document.getElementById('enableAlarm');
+    const alarmMinutesBeforeInput = document.getElementById('alarmMinutesBefore');
+    
+    let alarmData = null;
+    if (enableAlarm && enableAlarm.checked && alarmMinutesBeforeInput && alarmMinutesBeforeInput.value !== '') {
+        const minutesBefore = parseInt(alarmMinutesBeforeInput.value);
+        
+        // Calcular horário do alarme
+        const taskDateTime = new Date(dateKey + 'T' + taskTime);
+        const alarmDateTime = new Date(taskDateTime.getTime() - minutesBefore * 60000);
+        
+        alarmData = {
+            enabled: true,
+            date: alarmDateTime.toISOString().split('T')[0],
+            time: alarmDateTime.toTimeString().substring(0, 5),
+            minutesBefore: minutesBefore
+        };
+    }
+
+    // Salvar com alarme usando a nova função
+    if (typeof saveTaskWithAlarm === 'function') {
+        await saveTaskWithAlarm(taskData, alarmData);
+    } else {
+        // Fallback para método antigo
+        if (!state.tasks[dateKey]) {
+            state.tasks[dateKey] = [];
+        }
+        state.tasks[dateKey].push(taskData);
+    }
     
     // Efeitos visuais ao salvar
     createConfetti();
     checkAchievements();
     
-    saveToLocalStorage();
     renderCalendar();
     updateSummary();
     displayExistingTasks(state.selectedDate);
     
     // Limpar formulário
     document.getElementById('taskText').value = '';
+    if (taskTimeInput) taskTimeInput.value = '';
     document.querySelectorAll('.priority-btn').forEach(btn => {
         btn.classList.remove('active');
     });
     
-    showToast('✅ Tarefa salva com sucesso!');
+    // Limpar campos de alarme
+    if (enableAlarm) enableAlarm.checked = false;
+    if (alarmMinutesBeforeInput) alarmMinutesBeforeInput.value = '';
+    
+    const alarmFields = document.getElementById('alarmFields');
+    if (alarmFields) {
+        alarmFields.classList.add('hidden');
+    }
+    
+    const alarmPreview = document.getElementById('alarmPreview');
+    if (alarmPreview) {
+        alarmPreview.classList.add('hidden');
+    }
+    
+    // Remover seleção dos botões de alarme
+    document.querySelectorAll('.btn-quick-alarm').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    
+    showToast(alarmData ? '✅ Tarefa e alarme salvos! 🔔' : '✅ Tarefa salva com sucesso!');
 }
 
 function editTask(dateKey, index) {
@@ -534,15 +595,23 @@ function editTask(dateKey, index) {
     showToast('✏️ Editando tarefa...');
 }
 
-function deleteTask(dateKey, index) {
+async function deleteTask(dateKey, index) {
     if (!confirm('Deseja realmente excluir esta tarefa?')) {
         return;
     }
     
-    state.tasks[dateKey].splice(index, 1);
+    const task = state.tasks[dateKey][index];
     
-    if (state.tasks[dateKey].length === 0) {
-        delete state.tasks[dateKey];
+    // Usar nova função que cancela alarmes
+    if (typeof deleteTaskWithAlarm === 'function' && task.id) {
+        await deleteTaskWithAlarm(task.id, dateKey);
+    } else {
+        // Fallback para método antigo
+        state.tasks[dateKey].splice(index, 1);
+        
+        if (state.tasks[dateKey].length === 0) {
+            delete state.tasks[dateKey];
+        }
     }
     
     saveToLocalStorage();
@@ -835,6 +904,108 @@ function exportNotebookTXT() {
 }
 
 // ========================================
+// WhatsApp Integration
+// ========================================
+
+function openWhatsAppPrompt() {
+    const text = document.getElementById('notebookText').value;
+    
+    if (!text.trim()) {
+        showToast('⚠️ O caderno está vazio!', 'warning');
+        return;
+    }
+    
+    const whatsappModal = document.getElementById('whatsappModal');
+    whatsappModal.classList.add('active');
+    whatsappModal.style.display = 'block';
+    
+    // Focar no input
+    setTimeout(() => {
+        document.getElementById('whatsappNumber').focus();
+    }, 100);
+}
+
+function closeWhatsAppPrompt() {
+    const whatsappModal = document.getElementById('whatsappModal');
+    whatsappModal.classList.remove('active');
+    whatsappModal.style.display = 'none';
+    document.getElementById('whatsappNumber').value = '';
+}
+
+function sendToWhatsApp() {
+    const numberInput = document.getElementById('whatsappNumber');
+    let number = numberInput.value.trim().replace(/\D/g, ''); // Remove tudo exceto números
+    
+    if (!number) {
+        showToast('⚠️ Digite um número válido!', 'warning');
+        numberInput.focus();
+        return;
+    }
+    
+    // Validar número brasileiro (DDD + 8 ou 9 dígitos)
+    if (number.length < 10 || number.length > 11) {
+        showToast('⚠️ Número inválido! Use: DDD + número (10 ou 11 dígitos)', 'warning');
+        numberInput.focus();
+        return;
+    }
+    
+    // Adicionar código do país (+55)
+    const fullNumber = '55' + number;
+    
+    // Pegar texto do caderno
+    const text = document.getElementById('notebookText').value;
+    
+    // Formatar mensagem
+    const message = `*📘 TASKFLOW - Caderno de Anotações*\n` +
+                   `📅 Data: ${new Date().toLocaleString('pt-BR')}\n` +
+                   `${'─'.repeat(30)}\n\n` +
+                   `${text}`;
+    
+    // Criar URL do WhatsApp
+    const whatsappURL = `https://wa.me/${fullNumber}?text=${encodeURIComponent(message)}`;
+    
+    // Animação de envio
+    const confirmBtn = document.getElementById('confirmWhatsApp');
+    confirmBtn.classList.add('whatsapp-sending');
+    confirmBtn.textContent = '📤 Enviando...';
+    
+    setTimeout(() => {
+        // Abrir WhatsApp
+        window.open(whatsappURL, '_blank');
+        
+        // Fechar modal
+        closeWhatsAppPrompt();
+        
+        // Resetar botão
+        confirmBtn.classList.remove('whatsapp-sending');
+        confirmBtn.textContent = '✅ Enviar';
+        
+        showToast('✅ Abrindo WhatsApp...', 'success');
+    }, 500);
+}
+
+// Permitir envio com Enter
+document.addEventListener('DOMContentLoaded', () => {
+    const whatsappInput = document.getElementById('whatsappNumber');
+    if (whatsappInput) {
+        whatsappInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendToWhatsApp();
+            }
+        });
+        
+        // Formatar número enquanto digita
+        whatsappInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) {
+                value = value.slice(0, 11);
+            }
+            e.target.value = value;
+        });
+    }
+});
+
+// ========================================
 // Backup e Importação
 // ========================================
 function backupData() {
@@ -987,6 +1158,9 @@ function setupEventListeners() {
     });
     document.getElementById('notebookText').addEventListener('input', updateNotebookInfo);
     document.getElementById('clearNotebook').addEventListener('click', clearNotebook);
+    document.getElementById('sendWhatsApp').addEventListener('click', openWhatsAppPrompt);
+    document.getElementById('cancelWhatsApp').addEventListener('click', closeWhatsAppPrompt);
+    document.getElementById('confirmWhatsApp').addEventListener('click', sendToWhatsApp);
     document.getElementById('exportNotebookPDF').addEventListener('click', exportNotebookPDF);
     document.getElementById('exportNotebookTXT').addEventListener('click', exportNotebookTXT);
     

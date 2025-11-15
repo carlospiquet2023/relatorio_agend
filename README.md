@@ -1,6 +1,8 @@
 # 🚀 TaskFlow - Sistema Premium de Gerenciamento de Tarefas
 
 > **O sistema de tarefas mais avançado e bonito que você já viu!**
+> 
+> **🆕 NOVO: IndexedDB + Sistema de Alarmes com Notificações!**
 
 ## ✨ Features Exclusivas que Fazem Inveja
 
@@ -14,6 +16,31 @@
 
 ### 🎯 **Recursos Avançados**
 
+#### 💾 **IndexedDB - Banco de Dados Profissional**
+- 🚀 **Armazenamento Ilimitado** - Milhares de tarefas sem problemas
+- ⚡ **Performance Superior** - Consultas rápidas e eficientes
+- 🔄 **Migração Automática** - Converte dados antigos do LocalStorage
+- 📊 **Índices Otimizados** - Busca por data, prioridade, status
+- 💪 **Operações Assíncronas** - Não trava a interface
+- 🔒 **Dados Persistentes** - Nunca perde suas informações
+
+#### ⏰ **Sistema de Alarmes e Notificações**
+- 🔔 **Notificações do Navegador** - Avisos mesmo em outra aba
+- 🎵 **Som de Alarme** - Toca automaticamente no horário
+- 💫 **Alerta Visual Animado** - Pop-up chamativo na tela
+- ⏱️ **Agendamento Inteligente** - Define data e hora exatas
+- 📅 **Atalhos Rápidos** - "15 min antes", "30 min antes", "1 hora antes"
+- 🎯 **Verificação Contínua** - Checa alarmes a cada segundo
+- 🔕 **Botão Parar Alarme** - Desativa som e notificação
+- ✨ **Efeitos de Partículas** - Partículas flutuantes no alerta
+
+**Como usar os Alarmes:**
+1. Ao criar/editar uma tarefa, marque "⏰ Definir Alarme/Lembrete"
+2. Escolha data e hora do alarme
+3. Ou use os botões de atalho para agendar antes da tarefa
+4. Permita notificações quando solicitado
+5. Receba o alerta com som, notificação e pop-up visual!
+
 #### 🎪 **Efeitos Visuais Espetaculares**
 - 🎊 **Confete ao Salvar** - Explosão de cores ao criar tarefas
 - ✨ **Sparkles** - Efeito de faíscas em ações importantes
@@ -21,6 +48,7 @@
 - 🌟 **Glow Animations** - Brilho pulsante no dia atual
 - 🎨 **Rainbow Text** - Texto com gradiente arco-íris
 - 📊 **Loading Skeleton** - Animações de carregamento premium
+- 🚨 **Alerta Pulsante** - Animação de shake e pulse no alarme
 
 #### ⚡ **Command Palette (Ctrl+K)**
 Sistema de comandos rápidos estilo VSCode:
@@ -30,6 +58,7 @@ Sistema de comandos rápidos estilo VSCode:
 - 📄 Exportar Relatório (Ctrl+E)
 - 💾 Fazer Backup (Ctrl+B)
 - 🌙 Alternar Tema
+- 🔔 Ativar Notificações
 - E muito mais...
 
 #### 🏆 **Sistema de Conquistas**

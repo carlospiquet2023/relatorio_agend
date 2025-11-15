@@ -4,9 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Tarefas & Calendário</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    <!-- Sistema de Alarme Visual -->
+    <div id="alerta" class="alerta">
+        <div class="alerta-header">
+            <h2 id="alertaTitulo">🔔 Alarme</h2>
+            <button class="alerta-close" onclick="alarmSystem.stopAlarm()">✕</button>
+        </div>
+        <p id="alertaMensagem">Mensagem do alarme</p>
+        <button class="btn btn-danger alerta-btn" onclick="alarmSystem.stopAlarm()">⏰ Parar Alarme</button>
+    </div>
+
+    <!-- Áudio do Alarme -->
+    <audio id="somAlarme" preload="auto"></audio>
     <!-- Header -->
     <header class="header">
         <div class="container">
@@ -108,8 +120,13 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="taskDate">Data</label>
+                    <label for="taskDate">Data da Tarefa *</label>
                     <input type="text" id="taskDate" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="taskTime">Horário da Tarefa *</label>
+                    <input type="time" id="taskTime" class="task-time-input" required>
+                    <small class="field-hint">⏰ Defina o horário exato da tarefa</small>
                 </div>
                 <div class="form-group">
                     <label for="taskText">Tarefa / Observação *</label>
@@ -121,6 +138,41 @@
                         <button class="priority-btn" data-priority="high">🔴 Alta</button>
                         <button class="priority-btn" data-priority="medium">🟠 Média</button>
                         <button class="priority-btn" data-priority="low">🟢 Baixa</button>
+                    </div>
+                </div>
+                <div class="form-group alarm-section">
+                    <label class="alarm-label">
+                        <input type="checkbox" id="enableAlarm" class="alarm-checkbox">
+                        ⏰ Definir Lembrete (Alarme)
+                    </label>
+                    <div id="alarmFields" class="alarm-fields hidden">
+                        <div class="alarm-description">
+                            <p>📌 O alarme será baseado no <strong>horário da tarefa</strong> definido acima.</p>
+                            <p>Escolha quando deseja ser avisado:</p>
+                        </div>
+                        <div class="alarm-quick-actions">
+                            <button type="button" class="btn-quick-alarm" data-minutes="0">
+                                🔔 No horário exato
+                            </button>
+                            <button type="button" class="btn-quick-alarm" data-minutes="15">
+                                ⏰ 15 min antes
+                            </button>
+                            <button type="button" class="btn-quick-alarm" data-minutes="30">
+                                ⏰ 30 min antes
+                            </button>
+                            <button type="button" class="btn-quick-alarm" data-minutes="60">
+                                ⏰ 1 hora antes
+                            </button>
+                            <button type="button" class="btn-quick-alarm" data-minutes="120">
+                                ⏰ 2 horas antes
+                            </button>
+                        </div>
+                        <div id="alarmPreview" class="alarm-preview hidden">
+                            <strong>🔔 Alarme agendado para:</strong>
+                            <span id="alarmPreviewTime"></span>
+                        </div>
+                        <input type="hidden" id="alarmMinutesBefore" value="">
+                        <small class="alarm-info">💡 Você receberá notificação com som e alerta visual</small>
                     </div>
                 </div>
                 <div class="existing-tasks" id="existingTasks">
@@ -144,9 +196,28 @@
             <div class="modal-body">
                 <div class="notebook-toolbar">
                     <button class="btn btn-small" id="clearNotebook">🗑️ Limpar</button>
+                    <button class="btn btn-small btn-success" id="sendWhatsApp">📱 Enviar WhatsApp</button>
                     <button class="btn btn-small" id="exportNotebookPDF">📄 Exportar PDF</button>
                     <button class="btn btn-small" id="exportNotebookTXT">📝 Exportar TXT</button>
                 </div>
+                
+                <!-- Modal de WhatsApp -->
+                <div id="whatsappModal" class="whatsapp-prompt" style="display: none;">
+                    <div class="whatsapp-prompt-content">
+                        <h4>📱 Enviar para WhatsApp</h4>
+                        <p>Digite o número com DDD (apenas números):</p>
+                        <div class="whatsapp-input-group">
+                            <span class="country-code">+55</span>
+                            <input type="tel" id="whatsappNumber" placeholder="11999999999" maxlength="11" class="whatsapp-input">
+                        </div>
+                        <small class="whatsapp-hint">💡 Exemplo: 11999999999 (DDD + número)</small>
+                        <div class="whatsapp-buttons">
+                            <button class="btn btn-secondary btn-small" id="cancelWhatsApp">Cancelar</button>
+                            <button class="btn btn-success btn-small" id="confirmWhatsApp">✅ Enviar</button>
+                        </div>
+                    </div>
+                </div>
+                
                 <textarea id="notebookText" class="notebook-textarea" placeholder="Escreva suas anotações aqui..."></textarea>
                 <div class="notebook-info">
                     <span id="charCount">0 caracteres</span>
@@ -340,6 +411,9 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/alarm.js"></script>
+    <script src="js/integration.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>
