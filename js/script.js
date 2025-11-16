@@ -1415,10 +1415,7 @@ async function initializeCompleteSystem() {
     // 9. Configurar event listeners
     setupEventListeners();
     
-    // 10. Criar partículas de fundo
-    createBackgroundParticles();
-    
-    // 11. Inicializar animações
+    // 10. Inicializar animações
     if (typeof initializeAnimations === 'function') {
         initializeAnimations();
     }

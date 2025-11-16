@@ -299,9 +299,20 @@ class TaskFlowDB {
             const transaction = this.db.transaction(['alarms'], 'readonly');
             const store = transaction.objectStore('alarms');
             const index = store.index('triggered');
-            const request = index.getAll(false);
+            const request = index.openCursor();
+            const results = [];
 
-            request.onsuccess = () => resolve(request.result || []);
+            request.onsuccess = (event) => {
+                const cursor = event.target.result;
+                if (cursor) {
+                    if (cursor.value.triggered === false) {
+                        results.push(cursor.value);
+                    }
+                    cursor.continue();
+                } else {
+                    resolve(results);
+                }
+            };
             request.onerror = () => reject(request.error);
         });
     }
