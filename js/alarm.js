@@ -40,7 +40,7 @@ class AlarmSystem {
             this.audioElement.id = 'somAlarme';
             this.audioElement.preload = 'auto';
             // Usar arquivo de alarme profissional da pasta alarme
-            this.audioElement.src = 'alarme/Bells Message Pack vol.1  1.wav';
+            this.audioElement.src = 'alarme/Bells Message Pack vol.1  1.mp3';
             document.body.appendChild(this.audioElement);
         }
     }

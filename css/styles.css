@@ -789,6 +789,29 @@ body::before {
     width: 100%;
 }
 
+/* Fix time picker visibility in dark themes */
+input[type="time"] {
+    color-scheme: light;
+}
+
+[data-theme="dark"] input[type="time"],
+[data-theme="midnight"] input[type="time"],
+[data-theme="matrix"] input[type="time"],
+[data-theme="cyberpunk"] input[type="time"],
+[data-theme="neon"] input[type="time"] {
+    color-scheme: dark;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+}
+
+[data-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator,
+[data-theme="midnight"] input[type="time"]::-webkit-calendar-picker-indicator,
+[data-theme="matrix"] input[type="time"]::-webkit-calendar-picker-indicator,
+[data-theme="cyberpunk"] input[type="time"]::-webkit-calendar-picker-indicator,
+[data-theme="neon"] input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
 .task-time-input:focus {
     outline: none;
     border-color: var(--primary-color);

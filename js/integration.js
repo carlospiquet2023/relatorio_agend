@@ -306,33 +306,56 @@ window.setupAlarmInterface = function() {
         const timeValue = taskTimeInput.value;
         const minutesBefore = parseInt(alarmMinutesBeforeInput.value) || 0;
 
-        if (!dateValue || !timeValue) return;
+        // Validação rigorosa
+        if (!dateValue || !timeValue || dateValue.trim() === '' || timeValue.trim() === '') {
+            alarmPreview.classList.add('hidden');
+            return;
+        }
 
-        // Calcular horário do alarme
-        const [year, month, day] = dateValue.split('-');
-        const [hours, minutes] = timeValue.split(':');
-        const taskDateTime = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hours), parseInt(minutes));
-        const alarmDateTime = new Date(taskDateTime.getTime() - minutesBefore * 60000);
+        try {
+            // Calcular horário do alarme
+            const [year, month, day] = dateValue.split('-').map(v => parseInt(v));
+            const [hours, minutes] = timeValue.split(':').map(v => parseInt(v));
+            
+            // Validar valores
+            if (isNaN(year) || isNaN(month) || isNaN(day) || isNaN(hours) || isNaN(minutes)) {
+                alarmPreview.classList.add('hidden');
+                return;
+            }
+            
+            const taskDateTime = new Date(year, month - 1, day, hours, minutes);
+            
+            // Verificar se a data é válida
+            if (isNaN(taskDateTime.getTime())) {
+                alarmPreview.classList.add('hidden');
+                return;
+            }
+            
+            const alarmDateTime = new Date(taskDateTime.getTime() - minutesBefore * 60000);
 
-        // Formatar data e hora
-        const options = { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        };
-        const formattedDateTime = alarmDateTime.toLocaleDateString('pt-BR', options);
+            // Formatar data e hora
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            const formattedDateTime = alarmDateTime.toLocaleDateString('pt-BR', options);
 
-        alarmPreviewTime.textContent = formattedDateTime;
-        alarmPreview.classList.remove('hidden');
+            alarmPreviewTime.textContent = formattedDateTime;
+            alarmPreview.classList.remove('hidden');
 
-        // Feedback visual
-        alarmPreview.style.animation = 'none';
-        setTimeout(() => {
-            alarmPreview.style.animation = 'pulse 2s ease-in-out infinite';
-        }, 10);
+            // Feedback visual
+            alarmPreview.style.animation = 'none';
+            setTimeout(() => {
+                alarmPreview.style.animation = 'pulse 2s ease-in-out infinite';
+            }, 10);
+        } catch (error) {
+            console.error('Erro ao calcular preview do alarme:', error);
+            alarmPreview.classList.add('hidden');
+        }
     }
 };
 
