@@ -1,12 +1,16 @@
 {
-  "name": "TaskFlow",
+  "name": "TaskFlow - Sistema Profissional de Tarefas",
   "short_name": "TaskFlow",
-  "description": "Sistema Profissional de Gerenciamento de Tarefas com Alarmes",
+  "description": "Sistema Enterprise de Gerenciamento de Tarefas com IA, Alarmes Inteligentes e Analytics Avançado",
   "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "background_color": "#f9fafb",
   "theme_color": "#4f46e5",
-  "orientation": "portrait-primary",
+  "orientation": "any",
+  "dir": "ltr",
+  "lang": "pt-BR",
   "icons": [
     {
       "src": "assets/icon-192.png",
@@ -19,15 +23,22 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "badge"
     }
   ],
-  "categories": ["productivity", "utilities"],
+  "categories": ["productivity", "utilities", "business"],
+  "iarc_rating_id": "",
   "screenshots": [],
   "shortcuts": [
     {
       "name": "Nova Tarefa",
       "short_name": "Nova",
-      "description": "Criar nova tarefa",
+      "description": "Criar nova tarefa rapidamente",
       "url": "/index.html?action=new",
       "icons": [
         {
@@ -37,9 +48,9 @@
       ]
     },
     {
-      "name": "Estatísticas",
-      "short_name": "Stats",
-      "description": "Ver estatísticas",
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "Ver dashboard analítico",
       "url": "/index.html?action=stats",
       "icons": [
         {
@@ -47,6 +58,47 @@
           "sizes": "192x192"
         }
       ]
+    },
+    {
+      "name": "Caderno",
+      "short_name": "Notas",
+      "description": "Abrir caderno de anotações",
+      "url": "/index.html?action=notebook",
+      "icons": [
+        {
+          "src": "assets/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
+  ],
+  "share_target": {
+    "action": "/index.html",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "file_handlers": [
+    {
+      "action": "/index.html",
+      "accept": {
+        "application/json": [".json"]
+      }
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+taskflow",
+      "url": "/index.html?task=%s"
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "permissions": [
+    "notifications",
+    "storage"
   ]
 }

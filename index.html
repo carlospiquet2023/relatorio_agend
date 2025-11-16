@@ -42,9 +42,6 @@
             <div class="header-content">
                 <h1 class="logo">📅 TaskFlow</h1>
                 <div class="header-actions">
-                    <button class="btn btn-icon" id="installApp" title="Instalar App" style="display: none;">
-                        <span>📥</span>
-                    </button>
                     <button class="btn btn-icon" id="themeToggle" title="Alternar tema">
                         <span class="theme-icon">🌙</span>
                     </button>
@@ -432,6 +429,8 @@
     </div>
 
     <!-- Scripts -->
+    <script src="js/performance.js"></script>
+    <script src="js/loading.js"></script>
     <script src="js/database.js"></script>
     <script src="js/alarm.js"></script>
     <script src="js/themes.js"></script>
@@ -444,5 +443,12 @@
     
     <!-- Integração Electron (só carrega se for desktop) -->
     <script src="electron-integration.js"></script>
+    
+    <!-- Initialize Performance Monitoring -->
+    <script>
+        if (typeof performanceMonitor !== 'undefined') {
+            performanceMonitor.init();
+        }
+    </script>
 </body>
 </html>

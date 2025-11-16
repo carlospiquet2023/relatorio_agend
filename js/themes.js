@@ -6,7 +6,7 @@
 
 class ThemeSystem {
     constructor() {
-        this.currentTheme = 'light';
+        this.currentTheme = localStorage.getItem('taskflow_theme') || 'light';
         this.themes = {
             light: {
                 name: 'Light',

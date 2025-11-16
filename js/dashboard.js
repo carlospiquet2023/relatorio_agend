@@ -1,7 +1,8 @@
 /**
- * TaskFlow Dashboard System - Dashboard Dinâmico com Gráficos
- * Chart.js para visualizações profissionais
+ * TaskFlow Dashboard System - Dashboard Analítico Profissional
+ * Sistema completo de análise de dados com gráficos interativos
  * @author Carlos Antonio de Oliveira Piquet
+ * @version 2.0
  */
 
 class DashboardSystem {
@@ -9,12 +10,47 @@ class DashboardSystem {
         this.charts = {};
         this.chartColors = {
             primary: 'rgba(79, 70, 229, 0.8)',
+            primaryLight: 'rgba(79, 70, 229, 0.2)',
             secondary: 'rgba(16, 185, 129, 0.8)',
+            secondaryLight: 'rgba(16, 185, 129, 0.2)',
             danger: 'rgba(239, 68, 68, 0.8)',
+            dangerLight: 'rgba(239, 68, 68, 0.2)',
             warning: 'rgba(245, 158, 11, 0.8)',
+            warningLight: 'rgba(245, 158, 11, 0.2)',
             info: 'rgba(59, 130, 246, 0.8)',
+            infoLight: 'rgba(59, 130, 246, 0.2)',
             purple: 'rgba(168, 85, 247, 0.8)',
-            pink: 'rgba(236, 72, 153, 0.8)'
+            purpleLight: 'rgba(168, 85, 247, 0.2)',
+            pink: 'rgba(236, 72, 153, 0.8)',
+            pinkLight: 'rgba(236, 72, 153, 0.2)'
+        };
+        
+        // Configuração padrão dos gráficos
+        this.defaultChartOptions = {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 15,
+                        font: {
+                            size: 12,
+                            family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+                        },
+                        usePointStyle: true,
+                        boxWidth: 8
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    padding: 12,
+                    cornerRadius: 8,
+                    displayColors: true
+                }
+            }
         };
     }
 
@@ -22,6 +58,8 @@ class DashboardSystem {
      * Inicializa o dashboard
      */
     async init() {
+        console.log('📊 Inicializando Dashboard System...');
+        
         // Criar modal do dashboard
         this.createDashboardModal();
 
@@ -33,19 +71,29 @@ class DashboardSystem {
             });
         }
 
-        console.log('📊 Sistema de dashboard inicializado');
+        console.log('✅ Dashboard System inicializado');
     }
 
     /**
      * Abre o dashboard
      */
     async openDashboard() {
-        const modal = document.getElementById('dashboardModal');
-        if (modal) {
-            modal.classList.add('active');
-            
-            // Carregar dados e renderizar gráficos
-            await this.loadDashboardData();
+        try {
+            const modal = document.getElementById('dashboardModal');
+            if (modal) {
+                modal.classList.add('active');
+                
+                // Aguardar modal estar visível
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Carregar dados e renderizar gráficos
+                await this.loadDashboardData();
+            }
+        } catch (error) {
+            console.error('❌ Erro ao abrir dashboard:', error);
+            if (typeof showToast === 'function') {
+                showToast('Erro ao carregar dashboard');
+            }
         }
     }
 
@@ -66,16 +114,48 @@ class DashboardSystem {
      * Carrega dados e renderiza gráficos
      */
     async loadDashboardData() {
-        const tasks = await db.getAllTasks();
-        const stats = this.calculateStatistics(tasks);
-
-        // Renderizar todos os gráficos
-        this.renderPriorityChart(stats);
-        this.renderWeekPerformanceChart(stats);
-        this.renderCompletionChart(stats);
-        this.renderHeatmap(stats);
-        this.renderCategoryChart(stats);
-        this.updateStatCards(stats);
+        try {
+            // Buscar tarefas do banco de dados ou localStorage
+            let tasks = [];
+            if (typeof db !== 'undefined' && db.getAllTasks) {
+                tasks = await db.getAllTasks();
+            } else if (typeof state !== 'undefined' && state.tasks) {
+                // Converter objeto de tarefas em array
+                tasks = [];
+                Object.keys(state.tasks).forEach(date => {
+                    if (Array.isArray(state.tasks[date])) {
+                        state.tasks[date].forEach(task => {
+                            tasks.push({
+                                ...task,
+                                date: date
+                            });
+                        });
+                    }
+                });
+            }
+            
+            console.log(`📊 Carregando dashboard com ${tasks.length} tarefas`);
+            
+            const stats = this.calculateStatistics(tasks);
+            
+            // Atualizar cards de estatísticas
+            this.updateStatCards(stats);
+            
+            // Renderizar todos os gráficos
+            await Promise.all([
+                this.renderPriorityChart(stats),
+                this.renderWeekPerformanceChart(stats),
+                this.renderCompletionChart(stats),
+                this.renderCategoryChart(stats)
+            ]);
+            
+            // Renderizar heatmap (não usa Chart.js)
+            this.renderHeatmap(stats);
+            
+            console.log('✅ Dashboard carregado com sucesso');
+        } catch (error) {
+            console.error('❌ Erro ao carregar dados do dashboard:', error);
+        }
     }
 
     /**
@@ -170,62 +250,79 @@ class DashboardSystem {
     }
 
     /**
-     * Gráfico de tarefas por prioridade (Pizza)
+     * Gráfico de tarefas por prioridade (Pizza/Doughnut)
      */
     renderPriorityChart(stats) {
         const ctx = document.getElementById('priorityChart');
-        if (!ctx) return;
+        if (!ctx) {
+            console.warn('⚠️ Canvas priorityChart não encontrado');
+            return Promise.resolve();
+        }
 
         this.destroyChart('priority');
 
-        this.charts.priority = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['🔴 Alta', '🟠 Média', '🟢 Baixa'],
-                datasets: [{
-                    data: [stats.high, stats.medium, stats.low],
-                    backgroundColor: [
-                        this.chartColors.danger,
-                        this.chartColors.warning,
-                        this.chartColors.secondary
-                    ],
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 15,
+        const data = [stats.high || 0, stats.medium || 0, stats.low || 0];
+        const total = data.reduce((a, b) => a + b, 0);
+        
+        if (total === 0) {
+            console.warn('⚠️ Sem dados para gráfico de prioridades');
+            return Promise.resolve();
+        }
+
+        try {
+            this.charts.priority = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['🔴 Alta', '🟠 Média', '🟢 Baixa'],
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            this.chartColors.danger,
+                            this.chartColors.warning,
+                            this.chartColors.secondary
+                        ],
+                        borderWidth: 3,
+                        borderColor: '#fff',
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    ...this.defaultChartOptions,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        ...this.defaultChartOptions.plugins,
+                        title: {
+                            display: true,
+                            text: 'Tarefas por Prioridade',
                             font: {
-                                size: 12
+                                size: 16,
+                                weight: 'bold',
+                                family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 20
                             }
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Tarefas por Prioridade',
-                        font: {
-                            size: 16,
-                            weight: 'bold'
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = ((context.parsed / total) * 100).toFixed(1);
-                                return `${context.label}: ${context.parsed} (${percentage}%)`;
+                        },
+                        tooltip: {
+                            ...this.defaultChartOptions.plugins.tooltip,
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return `${context.label}: ${context.parsed} (${percentage}%)`;
+                                }
                             }
                         }
                     }
                 }
-            }
-        });
+            });
+            console.log('✅ Gráfico de prioridades renderizado');
+            return Promise.resolve();
+        } catch (error) {
+            console.error('❌ Erro ao renderizar gráfico de prioridades:', error);
+            return Promise.reject(error);
+        }
     }
 
     /**
@@ -233,7 +330,10 @@ class DashboardSystem {
      */
     renderWeekPerformanceChart(stats) {
         const ctx = document.getElementById('weekPerformanceChart');
-        if (!ctx) return;
+        if (!ctx) {
+            console.warn('⚠️ Canvas weekPerformanceChart não encontrado');
+            return Promise.resolve();
+        }
 
         this.destroyChart('weekPerformance');
 
@@ -248,63 +348,101 @@ class DashboardSystem {
             completedData.push(weekData.completed);
         });
 
-        this.charts.weekPerformance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: weeks.map(w => `Sem ${w}`),
-                datasets: [
-                    {
-                        label: 'Concluídas',
-                        data: completedData,
-                        borderColor: this.chartColors.secondary,
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    },
-                    {
-                        label: 'Total',
-                        data: totalData,
-                        borderColor: this.chartColors.primary,
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Desempenho Semanal',
-                        font: {
-                            size: 16,
-                            weight: 'bold'
+        try {
+            this.charts.weekPerformance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: weeks.map(w => `Semana ${w}`),
+                    datasets: [
+                        {
+                            label: '✅ Concluídas',
+                            data: completedData,
+                            borderColor: this.chartColors.secondary,
+                            backgroundColor: this.chartColors.secondaryLight,
+                            tension: 0.4,
+                            fill: true,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: this.chartColors.secondary,
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2
+                        },
+                        {
+                            label: '📋 Total',
+                            data: totalData,
+                            borderColor: this.chartColors.primary,
+                            backgroundColor: this.chartColors.primaryLight,
+                            tension: 0.4,
+                            fill: true,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: this.chartColors.primary,
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2
                         }
-                    }
+                    ]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
+                options: {
+                    ...this.defaultChartOptions,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        ...this.defaultChartOptions.plugins,
+                        title: {
+                            display: true,
+                            text: 'Desempenho Semanal',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 20
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                }
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+            console.log('✅ Gráfico de desempenho semanal renderizado');
+            return Promise.resolve();
+        } catch (error) {
+            console.error('❌ Erro ao renderizar gráfico semanal:', error);
+            return Promise.reject(error);
+        }
     }
 
     /**
-     * Gráfico de taxa de conclusão (Barra)
+     * Gráfico de taxa de conclusão (Barra Empilhada)
      */
     renderCompletionChart(stats) {
         const ctx = document.getElementById('completionChart');
-        if (!ctx) return;
+        if (!ctx) {
+            console.warn('⚠️ Canvas completionChart não encontrado');
+            return Promise.resolve();
+        }
 
         this.destroyChart('completion');
 
@@ -319,50 +457,80 @@ class DashboardSystem {
             pendingData.push(monthData.total - monthData.completed);
         });
 
-        this.charts.completion = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: months.map(m => this.formatMonth(m)),
-                datasets: [
-                    {
-                        label: 'Concluídas',
-                        data: completedData,
-                        backgroundColor: this.chartColors.secondary
+        try {
+            this.charts.completion = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months.map(m => this.formatMonth(m)),
+                    datasets: [
+                        {
+                            label: '✅ Concluídas',
+                            data: completedData,
+                            backgroundColor: this.chartColors.secondary,
+                            borderWidth: 0,
+                            borderRadius: 6
+                        },
+                        {
+                            label: '⏳ Pendentes',
+                            data: pendingData,
+                            backgroundColor: this.chartColors.warning,
+                            borderWidth: 0,
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    ...this.defaultChartOptions,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        ...this.defaultChartOptions.plugins,
+                        title: {
+                            display: true,
+                            text: 'Tarefas Concluídas vs Pendentes (6 meses)',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 20
+                            }
+                        }
                     },
-                    {
-                        label: 'Pendentes',
-                        data: pendingData,
-                        backgroundColor: this.chartColors.warning
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Horas Previstas vs Concluídas',
-                        font: {
-                            size: 16,
-                            weight: 'bold'
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
                         }
                     }
-                },
-                scales: {
-                    x: {
-                        stacked: true
-                    },
-                    y: {
-                        stacked: true,
-                        beginAtZero: true
-                    }
                 }
-            }
-        });
+            });
+            console.log('✅ Gráfico de conclusão renderizado');
+            return Promise.resolve();
+        } catch (error) {
+            console.error('❌ Erro ao renderizar gráfico de conclusão:', error);
+            return Promise.reject(error);
+        }
     }
 
     /**
@@ -431,73 +599,119 @@ class DashboardSystem {
     }
 
     /**
-     * Gráfico de categorias (se houver)
+     * Gráfico de categorias/tags
      */
     renderCategoryChart(stats) {
         const ctx = document.getElementById('categoryChart');
-        if (!ctx) return;
+        if (!ctx) {
+            console.warn('⚠️ Canvas categoryChart não encontrado');
+            return;
+        }
 
         this.destroyChart('category');
 
-        // Dados de exemplo (pode ser expandido)
-        this.charts.category = new Chart(ctx, {
-            type: 'polarArea',
-            data: {
-                labels: ['Trabalho', 'Pessoal', 'Estudo', 'Lazer', 'Saúde'],
-                datasets: [{
-                    data: [12, 8, 15, 5, 10],
-                    backgroundColor: [
-                        this.chartColors.primary,
-                        this.chartColors.secondary,
-                        this.chartColors.info,
-                        this.chartColors.purple,
-                        this.chartColors.pink
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Distribuição por Categoria',
-                        font: {
-                            size: 16,
-                            weight: 'bold'
+        // Dados baseados nas prioridades
+        const data = [stats.high || 0, stats.medium || 0, stats.low || 0];
+        const total = data.reduce((a, b) => a + b, 0);
+        
+        if (total === 0) {
+            // Sem dados, mostrar mensagem
+            const parent = ctx.parentElement;
+            parent.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary);">📊 Nenhuma tarefa registrada</div>';
+            return;
+        }
+
+        try {
+            this.charts.category = new Chart(ctx, {
+                type: 'polarArea',
+                data: {
+                    labels: ['🔴 Alta Prioridade', '🟠 Média Prioridade', '🟢 Baixa Prioridade'],
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            this.chartColors.dangerLight,
+                            this.chartColors.warningLight,
+                            this.chartColors.secondaryLight
+                        ],
+                        borderColor: [
+                            this.chartColors.danger,
+                            this.chartColors.warning,
+                            this.chartColors.secondary
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    ...this.defaultChartOptions,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        ...this.defaultChartOptions.plugins,
+                        title: {
+                            display: true,
+                            text: 'Distribuição por Prioridade',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+            console.log('✅ Gráfico de categorias renderizado');
+        } catch (error) {
+            console.error('❌ Erro ao renderizar gráfico de categorias:', error);
+        }
     }
 
     /**
      * Atualiza cards de estatísticas
      */
     updateStatCards(stats) {
-        const cards = {
-            'stat-total': stats.total,
-            'stat-completed': stats.completed,
-            'stat-pending': stats.pending,
-            'stat-completion-rate': stats.completionRate + '%',
-            'stat-avg-tasks': stats.avgTasksPerDay,
-            'stat-productive-day': stats.mostProductiveDay || 'N/A',
-            'stat-streak': stats.streak + ' dias',
-            'stat-high': stats.high,
-            'stat-medium': stats.medium,
-            'stat-low': stats.low
-        };
+        const updates = [
+            { id: 'stat-total', value: stats.total || 0 },
+            { id: 'stat-completed', value: stats.completed || 0 },
+            { id: 'stat-pending', value: stats.pending || 0 },
+            { id: 'stat-completion-rate', value: (stats.completionRate || 0) + '%' },
+            { id: 'stat-avg-tasks', value: stats.avgTasksPerDay || '0.0' },
+            { id: 'stat-streak', value: (stats.streak || 0) + ' dias' }
+        ];
 
-        Object.entries(cards).forEach(([id, value]) => {
+        updates.forEach(({ id, value }) => {
             const element = document.getElementById(id);
             if (element) {
-                element.textContent = value;
+                // Animação de contagem
+                this.animateValue(element, value);
             }
         });
+        
+        console.log('✅ Cards de estatísticas atualizados', stats);
+    }
+    
+    /**
+     * Anima o valor de um elemento
+     */
+    animateValue(element, finalValue) {
+        const isNumber = typeof finalValue === 'number';
+        const hasPercent = typeof finalValue === 'string' && finalValue.includes('%');
+        const hasDays = typeof finalValue === 'string' && finalValue.includes('dias');
+        
+        if (isNumber || hasPercent || hasDays) {
+            // Extrair número
+            const num = isNumber ? finalValue : parseFloat(finalValue);
+            
+            if (!isNaN(num)) {
+                element.style.opacity = '0';
+                setTimeout(() => {
+                    element.textContent = finalValue;
+                    element.style.opacity = '1';
+                    element.style.transition = 'opacity 0.3s ease';
+                }, 100);
+                return;
+            }
+        }
+        
+        // Fallback: apenas atualizar
+        element.textContent = finalValue;
     }
 
     /**

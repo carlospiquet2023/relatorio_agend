@@ -225,6 +225,10 @@ function loadFromLocalStorage() {
     
     if (savedTheme) {
         state.theme = savedTheme;
+    } else {
+        // Salvar tema padrão se não existir
+        state.theme = 'light';
+        localStorage.setItem('taskflow_theme', state.theme);
     }
 }
 
@@ -243,11 +247,18 @@ function initializeTheme() {
 }
 
 function toggleTheme() {
-    state.theme = state.theme === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', state.theme);
-    updateThemeIcon();
-    saveToLocalStorage();
-    showToast(`Tema ${state.theme === 'dark' ? 'escuro' : 'claro'} ativado`);
+    // Se o themeSystem existir, usar ele
+    if (typeof themeSystem !== 'undefined' && themeSystem.toggleTheme) {
+        themeSystem.toggleTheme();
+    } else {
+        // Fallback para toggle básico
+        state.theme = state.theme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', state.theme);
+        updateThemeIcon();
+        localStorage.setItem('taskflow_theme', state.theme);
+        saveToLocalStorage();
+        showToast(`Tema ${state.theme === 'dark' ? 'escuro' : 'claro'} ativado`);
+    }
 }
 
 function updateThemeIcon() {
