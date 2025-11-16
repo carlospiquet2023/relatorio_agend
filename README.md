@@ -2,7 +2,48 @@
 
 > **O sistema de tarefas mais avançado e bonito que você já viu!**
 > 
-> **🆕 NOVO: IndexedDB + Sistema de Alarmes com Notificações!**
+> **🆕 NOVO: App Desktop para Windows + Alarmes + Notificações!**
+
+## 🖥️ NOVIDADE: App Desktop Instalável!
+
+**Agora o TaskFlow pode ser instalado como um aplicativo nativo do Windows!**
+
+### ✨ Recursos do App Desktop
+- 🎯 **Ícone na Área de Trabalho** - Acesso rápido com duplo clique
+- 📱 **Ícone na Bandeja do Sistema** - Minimiza para a bandeja
+- 🔔 **Notificações Nativas** - Avisos do Windows (não precisa permissão)
+- ⌨️ **Atalhos de Teclado** - Ctrl+N, Ctrl+E, Ctrl+B, etc.
+- 💾 **Funciona Offline** - Dados salvos localmente
+- 🚀 **Inicia com Windows** - Configurável
+- 📊 **Badge de Tarefas** - Contador no ícone
+
+### 📦 Como Instalar o App Desktop
+
+**Opção 1: Instalação Rápida** (Recomendado)
+```powershell
+# 1. Abra PowerShell na pasta do projeto
+# 2. Execute:
+.\instalar.ps1
+
+# 3. Depois compile:
+.\compilar.ps1
+```
+
+**Opção 2: Manual**
+```powershell
+npm install
+npm run build:win
+```
+
+**Opção 3: Apenas Testar (sem instalar)**
+```powershell
+npm install
+npm start
+```
+
+📖 **[Instruções Completas](COMO_CRIAR_APP_DESKTOP.md)**
+
+---
 
 ## ✨ Features Exclusivas que Fazem Inveja
 

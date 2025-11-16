@@ -1,0 +1,79 @@
+{
+  "name": "taskflow",
+  "version": "2.0.0",
+  "description": "TaskFlow - Sistema Profissional de Gerenciamento de Tarefas",
+  "main": "electron-main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win --x64",
+    "build:win32": "electron-builder --win --ia32",
+    "build:all": "electron-builder --win --x64 --ia32"
+  },
+  "keywords": [
+    "taskflow",
+    "tarefas",
+    "calendario",
+    "alarmes",
+    "produtividade"
+  ],
+  "author": {
+    "name": "Carlos Antonio de Oliveira Piquet",
+    "email": "seu-email@exemplo.com"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {},
+  "build": {
+    "appId": "com.taskflow.app",
+    "productName": "TaskFlow",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/**/*",
+      "!dist/**/*",
+      "!.git/**/*",
+      "!*.md"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "artifactName": "TaskFlow-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "TaskFlow",
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "installerHeaderIcon": "assets/icon.ico",
+      "deleteAppDataOnUninstall": false,
+      "perMachine": false,
+      "language": "2070"
+    },
+    "portable": {
+      "artifactName": "TaskFlow-Portable-${version}.${ext}"
+    }
+  }
+}

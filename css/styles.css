@@ -3353,3 +3353,89 @@ body.alarm-screen-flash {
     }
 }
 
+/* ==================== PWA Install Button ==================== */
+#installApp {
+    position: relative;
+    overflow: hidden;
+}
+
+#installApp.pulse-animation {
+    animation: installPulse 2s ease-in-out infinite;
+}
+
+@keyframes installPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.6);
+    }
+}
+
+#installApp::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+#installApp:hover::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Opções de instalação no modal */
+.install-option {
+    transition: all 0.3s ease;
+}
+
+.install-option:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.install-option code {
+    background: var(--bg-secondary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    color: var(--primary-color);
+}
+
+.install-option ol {
+    line-height: 1.8;
+}
+
+.install-option a {
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+
+.install-option a:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+/* PWA específico */
+@media (display-mode: standalone) {
+    /* Estilos quando o app está instalado */
+    .header {
+        padding-top: env(safe-area-inset-top);
+    }
+    
+    #installApp {
+        display: none !important;
+    }
+}
+
+

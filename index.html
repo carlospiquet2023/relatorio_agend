@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Tarefas & Calendário</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Sistema Profissional de Gerenciamento de Tarefas com Alarmes e Notificações">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TaskFlow">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+    <link rel="apple-touch-icon" href="assets/icon-192.png">
+    
     <link rel="stylesheet" href="css/styles.css">
     <!-- Chart.js para gráficos profissionais -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -27,6 +42,9 @@
             <div class="header-content">
                 <h1 class="logo">📅 TaskFlow</h1>
                 <div class="header-actions">
+                    <button class="btn btn-icon" id="installApp" title="Instalar App" style="display: none;">
+                        <span>📥</span>
+                    </button>
                     <button class="btn btn-icon" id="themeToggle" title="Alternar tema">
                         <span class="theme-icon">🌙</span>
                     </button>
@@ -420,5 +438,11 @@
     <script src="js/dashboard.js"></script>
     <script src="js/integration.js"></script>
     <script src="js/script.js"></script>
+    
+    <!-- PWA Install Manager -->
+    <script src="js/pwa-install.js"></script>
+    
+    <!-- Integração Electron (só carrega se for desktop) -->
+    <script src="electron-integration.js"></script>
 </body>
 </html>
