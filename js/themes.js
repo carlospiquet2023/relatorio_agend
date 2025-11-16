@@ -334,7 +334,11 @@ class ThemeSystem {
         this.currentTheme = themeName;
 
         // Salvar preferência
-        db.saveSetting('theme', themeName);
+        db.saveSetting('theme', themeName).then(() => {
+            console.log('✅ Tema salvo no IndexedDB:', themeName);
+        }).catch(err => {
+            console.error('❌ Erro ao salvar tema:', err);
+        });
 
         // Atualizar ícone do tema
         this.updateThemeIcon();

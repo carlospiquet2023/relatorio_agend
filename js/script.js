@@ -393,9 +393,36 @@ function openTaskModal(date) {
     const modal = document.getElementById('taskModal');
     const dateInput = document.getElementById('taskDate');
     const taskText = document.getElementById('taskText');
+    const taskTime = document.getElementById('taskTime');
     
+    // Definir data formatada para exibição
     dateInput.value = formatDateDisplay(date);
+    
+    // IMPORTANTE: Adicionar data em formato ISO para os botões de alarme
+    dateInput.dataset.isoDate = formatDateKey(date);
+    
+    // Limpar campos
     taskText.value = '';
+    if (taskTime) taskTime.value = '';
+    
+    // Resetar checkbox de alarme
+    const enableAlarm = document.getElementById('enableAlarm');
+    if (enableAlarm) enableAlarm.checked = false;
+    
+    const alarmFields = document.getElementById('alarmFields');
+    if (alarmFields) alarmFields.classList.add('hidden');
+    
+    const alarmPreview = document.getElementById('alarmPreview');
+    if (alarmPreview) alarmPreview.classList.add('hidden');
+    
+    // Limpar minutos antes
+    const alarmMinutesBeforeInput = document.getElementById('alarmMinutesBefore');
+    if (alarmMinutesBeforeInput) alarmMinutesBeforeInput.value = '';
+    
+    // Remover seleção dos botões rápidos
+    document.querySelectorAll('.btn-quick-alarm').forEach(btn => {
+        btn.classList.remove('selected');
+    });
     
     // Resetar botões de prioridade
     document.querySelectorAll('.priority-btn').forEach(btn => {
@@ -406,6 +433,8 @@ function openTaskModal(date) {
     displayExistingTasks(date);
     
     modal.classList.add('active');
+    
+    console.log('📅 Modal aberto para data:', formatDateKey(date));
 }
 
 function closeTaskModal() {
@@ -1381,10 +1410,8 @@ async function initializeCompleteSystem() {
         await db.migrateFromLocalStorage();
     }
     
-    // 2. Inicializar sistema de alarmes
-    if (typeof alarmSystem !== 'undefined') {
-        await alarmSystem.init();
-    }
+    // 2. Inicializar sistema de alarmes - REMOVIDO (feito via integration.js)
+    // A inicialização do alarmSystem é feita no integration.js via initializeTaskFlow()
     
     // 3. Inicializar sistema de temas
     if (typeof themeSystem !== 'undefined') {

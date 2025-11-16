@@ -211,6 +211,8 @@ window.deleteTaskWithAlarm = async function(taskId, date) {
 // ==================== CONFIGURAÇÃO DE ALARMES NA INTERFACE ====================
 
 window.setupAlarmInterface = function() {
+    console.log('🔧 Configurando interface de alarmes...');
+    
     const enableAlarmCheckbox = document.getElementById('enableAlarm');
     const alarmFields = document.getElementById('alarmFields');
     const quickAlarmButtons = document.querySelectorAll('.btn-quick-alarm');
@@ -219,8 +221,18 @@ window.setupAlarmInterface = function() {
     const alarmPreviewTime = document.getElementById('alarmPreviewTime');
     const alarmMinutesBeforeInput = document.getElementById('alarmMinutesBefore');
 
+    console.log('✅ Elementos encontrados:', {
+        enableAlarmCheckbox: !!enableAlarmCheckbox,
+        alarmFields: !!alarmFields,
+        quickAlarmButtons: quickAlarmButtons.length,
+        taskTimeInput: !!taskTimeInput,
+        alarmPreview: !!alarmPreview
+    });
+
     if (enableAlarmCheckbox && alarmFields) {
         enableAlarmCheckbox.addEventListener('change', function() {
+            console.log('📋 Checkbox de alarme alterado:', this.checked);
+            
             if (this.checked) {
                 alarmFields.classList.remove('hidden');
                 
@@ -256,11 +268,15 @@ window.setupAlarmInterface = function() {
             e.preventDefault();
             
             const minutes = parseInt(this.dataset.minutes);
+            console.log(`⏰ Botão de alarme clicado: ${minutes} minutos antes`);
+            
             const taskDateInput = document.getElementById('taskDate');
             const taskTimeInput = document.getElementById('taskTime');
             
-            if (!taskDateInput || !taskDateInput.value) {
+            // Verificar data usando dataset
+            if (!taskDateInput || !taskDateInput.dataset.isoDate) {
                 showToast('⚠️ Selecione primeiro uma data para a tarefa!', 'warning');
+                console.warn('Data não encontrada no dataset');
                 return;
             }
 
@@ -269,11 +285,14 @@ window.setupAlarmInterface = function() {
                 return;
             }
 
+            console.log('✅ Data:', taskDateInput.dataset.isoDate, 'Hora:', taskTimeInput.value);
+
             // Remover seleção de outros botões
             quickAlarmButtons.forEach(btn => btn.classList.remove('selected'));
             
             // Marcar este botão como selecionado
             this.classList.add('selected');
+            console.log('✅ Botão marcado como selecionado');
 
             // Armazenar os minutos antes
             if (alarmMinutesBeforeInput) {
@@ -299,16 +318,21 @@ window.setupAlarmInterface = function() {
         const alarmPreviewTime = document.getElementById('alarmPreviewTime');
 
         if (!taskDateInput || !taskTimeInput || !alarmMinutesBeforeInput || !alarmPreview || !alarmPreviewTime) {
+            console.warn('⚠️ Elementos do preview não encontrados');
             return;
         }
 
-        const dateValue = taskDateInput.value;
+        // Usar dataset.isoDate em vez de value
+        const dateValue = taskDateInput.dataset.isoDate;
         const timeValue = taskTimeInput.value;
         const minutesBefore = parseInt(alarmMinutesBeforeInput.value) || 0;
+
+        console.log('🔍 Atualizando preview:', { dateValue, timeValue, minutesBefore });
 
         // Validação rigorosa
         if (!dateValue || !timeValue || dateValue.trim() === '' || timeValue.trim() === '') {
             alarmPreview.classList.add('hidden');
+            console.warn('⚠️ Dados incompletos para preview');
             return;
         }
 
@@ -320,6 +344,7 @@ window.setupAlarmInterface = function() {
             // Validar valores
             if (isNaN(year) || isNaN(month) || isNaN(day) || isNaN(hours) || isNaN(minutes)) {
                 alarmPreview.classList.add('hidden');
+                console.warn('⚠️ Valores inválidos:', { year, month, day, hours, minutes });
                 return;
             }
             
@@ -328,6 +353,7 @@ window.setupAlarmInterface = function() {
             // Verificar se a data é válida
             if (isNaN(taskDateTime.getTime())) {
                 alarmPreview.classList.add('hidden');
+                console.warn('⚠️ Data inválida');
                 return;
             }
             
@@ -346,6 +372,8 @@ window.setupAlarmInterface = function() {
 
             alarmPreviewTime.textContent = formattedDateTime;
             alarmPreview.classList.remove('hidden');
+            
+            console.log('✅ Preview atualizado:', formattedDateTime);
 
             // Feedback visual
             alarmPreview.style.animation = 'none';
@@ -441,20 +469,7 @@ window.getStatsFromDB = async function() {
 };
 
 // ==================== SOLICITAR PERMISSÃO DE NOTIFICAÇÕES ====================
-
-window.requestNotificationPermission = async function() {
-    if ('Notification' in window && Notification.permission === 'default') {
-        const permission = await Notification.requestPermission();
-        
-        if (permission === 'granted') {
-            showToast('✅ Notificações ativadas!', 'success');
-            new Notification('TaskFlow', {
-                body: 'Você receberá lembretes das suas tarefas!',
-                icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">✅</text></svg>'
-            });
-        }
-    }
-};
+// REMOVIDO - Agora é gerenciado pelo AlarmSystem em alarm.js
 
 // ==================== INICIALIZAÇÃO AUTOMÁTICA ====================
 
@@ -501,7 +516,15 @@ document.addEventListener('DOMContentLoaded', async function() {
             document.body.appendChild(banner);
 
             document.getElementById('allowNotif').onclick = async () => {
-                await requestNotificationPermission();
+                // Usar a função do alarmSystem
+                if (typeof alarmSystem !== 'undefined' && alarmSystem.requestNotificationPermission) {
+                    await alarmSystem.requestNotificationPermission();
+                } else {
+                    // Fallback direto
+                    if ('Notification' in window) {
+                        await Notification.requestPermission();
+                    }
+                }
                 banner.remove();
             };
 

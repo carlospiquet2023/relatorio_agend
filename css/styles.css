@@ -784,32 +784,61 @@ body::before {
     border-radius: 8px;
     font-size: 1rem;
     transition: all 0.3s ease;
-    background: var(--bg-color);
-    color: var(--text-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
     width: 100%;
 }
 
-/* Fix time picker visibility in dark themes */
+/* Fix time picker visibility - preto no claro, branco no escuro */
 input[type="time"] {
     color-scheme: light;
+    background-color: #ffffff;
+    color: #000000;
 }
 
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0);
+    cursor: pointer;
+}
+
+/* Temas escuros - relógio branco */
 [data-theme="dark"] input[type="time"],
 [data-theme="midnight"] input[type="time"],
 [data-theme="matrix"] input[type="time"],
 [data-theme="cyberpunk"] input[type="time"],
-[data-theme="neon"] input[type="time"] {
+[data-theme="neon"] input[type="time"],
+[data-theme="forest"] input[type="time"] {
     color-scheme: dark;
-    background-color: rgba(255, 255, 255, 0.05);
-    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff !important;
 }
 
 [data-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator,
 [data-theme="midnight"] input[type="time"]::-webkit-calendar-picker-indicator,
 [data-theme="matrix"] input[type="time"]::-webkit-calendar-picker-indicator,
 [data-theme="cyberpunk"] input[type="time"]::-webkit-calendar-picker-indicator,
-[data-theme="neon"] input[type="time"]::-webkit-calendar-picker-indicator {
-    filter: invert(1);
+[data-theme="neon"] input[type="time"]::-webkit-calendar-picker-indicator,
+[data-theme="forest"] input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(1.5);
+}
+
+/* Temas claros - relógio preto */
+[data-theme="light"] input[type="time"],
+[data-theme="minimal"] input[type="time"],
+[data-theme="lavender"] input[type="time"],
+[data-theme="ocean"] input[type="time"],
+[data-theme="sunset"] input[type="time"] {
+    color-scheme: light;
+    background-color: #ffffff;
+    color: #000000 !important;
+}
+
+[data-theme="light"] input[type="time"]::-webkit-calendar-picker-indicator,
+[data-theme="minimal"] input[type="time"]::-webkit-calendar-picker-indicator,
+[data-theme="lavender"] input[type="time"]::-webkit-calendar-picker-indicator,
+[data-theme="ocean"] input[type="time"]::-webkit-calendar-picker-indicator,
+[data-theme="sunset"] input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0);
 }
 
 .task-time-input:focus {
@@ -2849,6 +2878,297 @@ input[type="time"] {
 }
 
 /* ========================================
+   ALARME ULTRA PODEROSO - Efeitos Extremos
+   ======================================== */
+
+/* Shake da tela inteira */
+@keyframes screenShake {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    10% { transform: translate(-10px, -5px) rotate(-1deg); }
+    20% { transform: translate(10px, 5px) rotate(1deg); }
+    30% { transform: translate(-10px, 5px) rotate(-1deg); }
+    40% { transform: translate(10px, -5px) rotate(1deg); }
+    50% { transform: translate(-10px, -5px) rotate(-1deg); }
+    60% { transform: translate(10px, 5px) rotate(1deg); }
+    70% { transform: translate(-10px, 5px) rotate(-1deg); }
+    80% { transform: translate(10px, -5px) rotate(1deg); }
+    90% { transform: translate(-10px, -5px) rotate(-1deg); }
+}
+
+body.alarm-shake-screen {
+    animation: screenShake 0.5s ease-in-out infinite;
+}
+
+/* Flash de tela */
+body.alarm-screen-flash {
+    background: rgba(255, 0, 0, 0.2) !important;
+}
+
+/* Modal Extremo */
+.alarm-modal-extreme {
+    z-index: 999999 !important;
+}
+
+.alarm-overlay-extreme {
+    background: rgba(255, 0, 0, 0.3) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    backdrop-filter: blur(15px) !important;
+    animation: overlayPulse 1s ease-in-out infinite;
+}
+
+@keyframes overlayPulse {
+    0%, 100% { background: rgba(255, 0, 0, 0.3); }
+    50% { background: rgba(255, 50, 0, 0.5); }
+}
+
+.alarm-content-extreme {
+    background: linear-gradient(135deg, #ff0000 0%, #ff4500 50%, #ff6347 100%) !important;
+    border: 5px solid #ffff00 !important;
+    box-shadow: 0 0 100px rgba(255, 0, 0, 1), 
+                0 0 60px rgba(255, 165, 0, 0.8),
+                inset 0 0 40px rgba(255, 255, 0, 0.3) !important;
+    transform: scale(0.5) !important;
+    animation: extremeEnter 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes extremeEnter {
+    0% { transform: scale(0.5) rotate(-180deg); }
+    50% { transform: scale(1.2) rotate(10deg); }
+    100% { transform: scale(1) rotate(0deg); }
+}
+
+/* Anéis de explosão */
+.alarm-explosion-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    border: 5px solid #ffff00;
+    border-radius: 50%;
+    animation: explosionRing 1.5s ease-out infinite;
+}
+
+.alarm-ring-2 {
+    animation-delay: 0.5s;
+    border-color: #ff4500;
+}
+
+.alarm-ring-3 {
+    animation-delay: 1s;
+    border-color: #00ffff;
+}
+
+@keyframes explosionRing {
+    0% {
+        width: 100px;
+        height: 100px;
+        opacity: 1;
+    }
+    100% {
+        width: 500px;
+        height: 500px;
+        opacity: 0;
+    }
+}
+
+/* Ícone Mega */
+.alarm-icon-mega {
+    position: relative;
+    filter: drop-shadow(0 0 30px #ffff00);
+}
+
+.alarm-icon-extreme {
+    font-size: 8rem !important;
+    animation: iconMegaShake 0.3s ease-in-out infinite, iconSpin 2s linear infinite !important;
+    filter: drop-shadow(0 0 20px #ff0000);
+}
+
+@keyframes iconMegaShake {
+    0%, 100% { transform: rotate(-15deg) scale(1); }
+    25% { transform: rotate(15deg) scale(1.1); }
+    50% { transform: rotate(-15deg) scale(1); }
+    75% { transform: rotate(15deg) scale(1.1); }
+}
+
+@keyframes iconSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Pulsos extremos */
+.alarm-pulse-extreme {
+    width: 200px !important;
+    height: 200px !important;
+    background: radial-gradient(circle, #ffff00 0%, transparent 70%) !important;
+    animation: megaPulse 0.8s ease-out infinite !important;
+}
+
+.alarm-pulse-extreme-2 {
+    animation-delay: 0.4s !important;
+    background: radial-gradient(circle, #ff0000 0%, transparent 70%) !important;
+}
+
+@keyframes megaPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2.5);
+        opacity: 0;
+    }
+}
+
+/* Raios */
+.alarm-lightning {
+    position: absolute;
+    font-size: 3rem;
+    animation: lightningStrike 0.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px #ffff00);
+}
+
+.alarm-lightning-1 {
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.alarm-lightning-2 {
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+    animation-delay: 0.25s;
+}
+
+.alarm-lightning-3 {
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    animation-delay: 0.125s;
+}
+
+.alarm-lightning-4 {
+    right: -40px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    animation-delay: 0.375s;
+}
+
+@keyframes lightningStrike {
+    0%, 100% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Título e mensagem extremos */
+.alarm-title-extreme {
+    font-size: 3rem !important;
+    font-weight: 900 !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 20px #ffff00,
+                 0 0 30px #ff0000,
+                 3px 3px 0 #000000 !important;
+    animation: titlePulse 0.5s ease-in-out infinite !important;
+    letter-spacing: 2px;
+}
+
+@keyframes titlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.alarm-message-extreme {
+    font-size: 1.5rem !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    text-shadow: 2px 2px 4px #000000 !important;
+}
+
+/* Barra de urgência */
+.alarm-urgency-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.alarm-urgency-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff0000 0%, #ff4500 50%, #ffff00 100%);
+    animation: urgencyFill 2s ease-in-out infinite;
+    box-shadow: 0 0 20px #ff0000;
+}
+
+@keyframes urgencyFill {
+    0% { width: 0%; }
+    50% { width: 100%; }
+    100% { width: 0%; }
+}
+
+/* Botões extremos */
+.alarm-buttons-extreme {
+    gap: 1.5rem !important;
+}
+
+.alarm-btn-mega {
+    font-size: 1.5rem !important;
+    padding: 1.5rem 3rem !important;
+    min-width: 250px !important;
+    background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%) !important;
+    border: 3px solid #ffff00 !important;
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.8),
+                0 10px 20px rgba(0, 0, 0, 0.5) !important;
+    animation: buttonPulse 1s ease-in-out infinite !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 2px !important;
+}
+
+.alarm-btn-mega:hover {
+    transform: scale(1.1) !important;
+    box-shadow: 0 0 50px rgba(0, 255, 0, 1) !important;
+}
+
+@keyframes buttonPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(0, 255, 0, 0.8); }
+    50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(0, 255, 0, 1); }
+}
+
+.alarm-btn-snooze {
+    font-size: 1.2rem !important;
+    padding: 1rem 2rem !important;
+    background: linear-gradient(135deg, #9400d3 0%, #4b0082 100%) !important;
+    border: 2px solid #ffffff !important;
+}
+
+/* Animações de partículas */
+@keyframes explodeParticle {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0);
+        opacity: 0;
+    }
+}
+
+@keyframes fallConfetti {
+    0% {
+        transform: translateY(-50px) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* ========================================
    DASHBOARD - Modal e Gráficos
    ======================================== */
 .modal-dashboard {
@@ -3017,5 +3337,19 @@ input[type="time"] {
     }
 }
 
+/* ==================== Botão de Ativar Som do Alarme ==================== */
+.btn-enable-sound {
+    animation: pulseGlow 1.5s ease-in-out infinite !important;
+}
 
+@keyframes pulseGlow {
+    0%, 100% {
+        transform: translateX(-50%) scale(1);
+        box-shadow: 0 4px 20px rgba(255, 0, 0, 0.5);
+    }
+    50% {
+        transform: translateX(-50%) scale(1.05);
+        box-shadow: 0 8px 30px rgba(255, 0, 0, 0.8);
+    }
+}
 
